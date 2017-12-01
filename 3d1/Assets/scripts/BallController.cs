@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class BallController : MonoBehaviour {
 
@@ -9,6 +10,8 @@ public class BallController : MonoBehaviour {
 	private int isJumping;
 	private int maxSaltos;
 	public GameObject camera;
+	private int dCount;
+	public Vector3 jumpForce = new Vector3 ();
 
 
 	// Use this for initialization
@@ -17,6 +20,7 @@ public class BallController : MonoBehaviour {
 		isJumping = 0;
 		maxSaltos = 1;
 		Physics.gravity = new Vector3 (0.0f, -100.0f, 0.0f);
+		dCount = 0;
 
 		//this.ballPosition.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationY;
 	}
@@ -24,22 +28,24 @@ public class BallController : MonoBehaviour {
 
 	void FixedUpdate () {
 		
-		//global gravity
-		//this is movement
-		//float horizontalAxis = ballPosition.transform.eulerAngles.x;
-		//float verticalAxis = ballPosition.transform.eulerAngles.y;
-		//Vector3 movement = new Vector3(horizontalAxis, 0.0f,verticalAxis);
-		if (Input.GetKeyDown ("w") || Input.GetKey ("w")) {
-			rb.AddForce(ballPosition.transform.forward * speed);
-		}
-		if (Input.GetKeyDown ("s") || Input.GetKey ("s")) {
-			rb.AddForce(-ballPosition.transform.forward * speed);
-		}
-		if (Input.GetKeyDown ("d") || Input.GetKey ("d")) {
-			rb.AddForce(ballPosition.transform.right * speed);
-		}
-		if (Input.GetKeyDown ("a") || Input.GetKey ("a")) {
-			rb.AddForce(-ballPosition.transform.right * speed);
+
+		if (maxSaltos >= 2) {
+			if (Input.GetKeyDown ("w") || Input.GetKey ("w")) {
+				rb.AddForce (ballPosition.transform.forward * (speed /2));
+				rb.AddForce (-ballPosition.transform.right * (speed /2));
+			}
+			if (Input.GetKeyDown ("s") || Input.GetKey ("s")) {
+				rb.AddForce (-ballPosition.transform.forward * (speed /2));
+				rb.AddForce (ballPosition.transform.right * (speed /2));
+			}
+			if (Input.GetKeyDown ("d") || Input.GetKey ("d")) {
+				rb.AddForce (ballPosition.transform.right * (speed /2));
+				rb.AddForce (ballPosition.transform.forward * (speed /2));
+			}
+			if (Input.GetKeyDown ("a") || Input.GetKey ("a")) {
+				rb.AddForce (-ballPosition.transform.right * (speed /2));
+				rb.AddForce (-ballPosition.transform.forward * (speed /2));
+			}
 		}
 
 		//rb.AddRelativeForce(Vector3.forward * speed);
@@ -47,7 +53,6 @@ public class BallController : MonoBehaviour {
 
 		//this is for jumps
 		if(Input.GetKeyDown("space") && maxSaltos > 0){
-			Vector3 jumpForce = new Vector3 (0.0f, 30.0f, 0.0f);
 			rb.AddForce(jumpForce, ForceMode.Impulse);
 			maxSaltos--;
 		}
@@ -55,7 +60,15 @@ public class BallController : MonoBehaviour {
 	void OnCollisionEnter(Collision c){
 		this.maxSaltos = 2;
 		if (c.gameObject.tag == "Mob") {
-			rb.AddForce(-ballPosition.transform.forward * 1000, ForceMode.Impulse);
+			SceneManager.LoadScene ("garaje");
+		}
+	}
+
+	void OnTriggerEnter(Collider c){
+		if (c.gameObject.tag == "coin") {
+			c.gameObject.SetActive (false);
+			dCount++;
+			Debug.Log(dCount);
 		}
 
 	}

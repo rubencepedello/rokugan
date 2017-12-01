@@ -23,8 +23,9 @@ public class Mobs : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		transform.Rotate (Vector3.right, Time.deltaTime * 10);
-		GetComponent<Rigidbody>().rotation = ;
+		
+		transform.Rotate (Vector3.right, Time.deltaTime * 180);
+		//GetComponent<Rigidbody>().rotation = ;
 
 		/*if (goingUp == true && distance < maxDistance) {
 			transform.position = new Vector3(0.0f, 1.0f, 0.0f);
